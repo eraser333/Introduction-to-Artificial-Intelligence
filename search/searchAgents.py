@@ -263,7 +263,7 @@ def yourHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return (xy1[0] - xy2[0])  + (xy1[1] - xy2[1])
 
-class yourSearchAgent(SearchAgent):
+class MediumCrazySearchAgent(SearchAgent):
     """
     You can design different SearchAgents for different Mazes
     """
