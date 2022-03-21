@@ -187,6 +187,7 @@ def uniformCostSearch(problem):
 
     while not frontier.isEmpty():
         cur_state = frontier.pop()
+        print(cur_state, path_cost[cur_state])
         explored_set.add(cur_state)
         if problem.isGoalState(cur_state):
             goal_state = cur_state
@@ -217,7 +218,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     path_cost = dict()
 
     start_state = problem.getStartState()
-    f_start = heuristic(start_state)
+    f_start = heuristic(start_state, problem)
     frontier.push(start_state, f_start)
     previous_dict[start_state] = "start"
     path_cost[start_state] = 0
@@ -234,7 +235,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         for next_state in problem.expand(cur_state):
             if next_state[0] not in explored_set:
                 new_g_cost = path_cost[cur_state] + next_state[2]
-                new_f_cost =  new_g_cost + heuristic(next_state[0])
+                new_f_cost =  new_g_cost + heuristic(next_state[0], problem)
                 print(next_state[0], new_f_cost)
                 frontier.update(next_state[0], new_f_cost) 
                 path_cost[next_state[0]] = new_g_cost
