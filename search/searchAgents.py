@@ -272,3 +272,13 @@ class MediumCrazySearchAgent(SearchAgent):
         self.searchFunction = search.uniformCostSearch
         costFn = lambda pos: 2 ** pos[0]
         self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1), None, False)
+
+class foodSearchAgent(SearchAgent):
+    """
+    You can design different SearchAgents for different Mazes
+    """
+    def __init__(self):
+        "*** YOUR CODE HERE ***"
+        self.searchFunction = search.uniformCostSearch
+        costFn = lambda pos: 0.01 if pos[0] == 1 or pos[1] == 5  else 1
+        self.searchType = lambda state: PositionSearchProblem(state, costFn, (16, 1), None, False)

@@ -114,21 +114,19 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
     frontier = util.Stack()
-    explored_set = set()
     previous_dict = dict()
     frontier.push(problem.getStartState())
     previous_dict[problem.getStartState()] = "start"
 
     while not frontier.isEmpty():
         cur_state = frontier.pop()
-        explored_set.add(cur_state)
 
         if problem.isGoalState(cur_state):
             goal_state = cur_state
             break
 
         for next_state in problem.expand(cur_state):
-            if next_state[0] not in explored_set:
+            if next_state[0] not in previous_dict:
                 frontier.push(next_state[0])
                 previous_dict[next_state[0]] = (cur_state , next_state[1]) 
 
@@ -144,7 +142,6 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     frontier = util.Queue()
-    explored_set = set()
     previous_dict = dict()
 
     start_state = problem.getStartState()
@@ -153,14 +150,13 @@ def breadthFirstSearch(problem):
 
     while not frontier.isEmpty():
         cur_state = frontier.pop()
-        explored_set.add(cur_state)
 
         if problem.isGoalState(cur_state):
             goal_state = cur_state
             break
         
         for next_state in problem.expand(cur_state):
-            if next_state[0] not in explored_set:
+            if next_state[0] not in previous_dict:
                 frontier.push(next_state[0])
                 previous_dict[next_state[0]] = (cur_state , next_state[1]) 
 
@@ -176,7 +172,6 @@ def uniformCostSearch(problem):
     """Search the node of least cost from the root."""
     "*** YOUR CODE HERE ***"
     frontier = util.PriorityQueue()
-    explored_set = set()
     previous_dict = dict()
     path_cost = dict()
 
@@ -187,19 +182,21 @@ def uniformCostSearch(problem):
 
     while not frontier.isEmpty():
         cur_state = frontier.pop()
-        print(cur_state, path_cost[cur_state])
-        explored_set.add(cur_state)
         if problem.isGoalState(cur_state):
             goal_state = cur_state
-            print(path_cost[cur_state])
             break
-        
-        for next_state in problem.expand(cur_state):
-            if next_state[0] not in explored_set:
-                new_path_cost =  path_cost[cur_state]+ next_state[2]
-                frontier.update(next_state[0],new_path_cost) 
+
+        for next_state in problem.expand(cur_state):  
+            new_path_cost =  path_cost[cur_state]+ next_state[2]
+            if next_state[0] not in previous_dict:
+                frontier.push(next_state[0], new_path_cost) 
                 previous_dict[next_state[0]] = (cur_state , next_state[1]) 
                 path_cost[next_state[0]] = new_path_cost
+            else:
+                if path_cost[next_state[0]] > new_path_cost:
+                    frontier.update(next_state[0], new_path_cost) 
+                    previous_dict[next_state[0]] = (cur_state , next_state[1]) 
+                    path_cost[next_state[0]] = new_path_cost
 
     path = []
     while previous_dict[goal_state] != "start":
@@ -213,33 +210,38 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     frontier = util.PriorityQueue()
-    explored_set = set()
     previous_dict = dict()
-    path_cost = dict()
+    g_cost = dict()
+    f_cost = dict()
 
     start_state = problem.getStartState()
     f_start = heuristic(start_state, problem)
     frontier.push(start_state, f_start)
     previous_dict[start_state] = "start"
-    path_cost[start_state] = 0
+    g_cost[start_state] = 0
+    f_cost[start_state] = f_start
 
     while not frontier.isEmpty():
         cur_state = frontier.pop()
-        #print(cur_state)
-        explored_set.add(cur_state)
         if problem.isGoalState(cur_state):
             goal_state = cur_state
-            print(path_cost[goal_state])
             break
         
         for next_state in problem.expand(cur_state):
-            if next_state[0] not in explored_set:
-                new_g_cost = path_cost[cur_state] + next_state[2]
-                new_f_cost =  new_g_cost + heuristic(next_state[0], problem)
-                print(next_state[0], new_f_cost)
-                frontier.update(next_state[0], new_f_cost) 
-                path_cost[next_state[0]] = new_g_cost
+            new_g_cost = g_cost[cur_state] + next_state[2]
+            new_f_cost = new_g_cost + heuristic(next_state[0], problem)
+            if next_state[0] not in previous_dict:
+                frontier.push(next_state[0], new_f_cost) 
+                g_cost[next_state[0]] = new_g_cost
+                f_cost[next_state[0]] = new_f_cost
                 previous_dict[next_state[0]] = (cur_state , next_state[1]) 
+            else:
+                if f_cost[next_state[0]] > new_f_cost:
+                    frontier.update(next_state[0], new_f_cost)
+                    g_cost[next_state[0]] = new_g_cost
+                    f_cost[next_state[0]] = new_f_cost
+                    previous_dict[next_state[0]] = (cur_state , next_state[1]) 
+
 
     path = []
     while previous_dict[goal_state] != "start":
