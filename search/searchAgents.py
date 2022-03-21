@@ -269,4 +269,6 @@ class MediumCrazySearchAgent(SearchAgent):
     """
     def __init__(self):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        self.searchFunction = search.uniformCostSearch
+        costFn = lambda pos: 2 ** pos[0]
+        self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1), None, False)

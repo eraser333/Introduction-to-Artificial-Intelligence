@@ -178,13 +178,16 @@ def uniformCostSearch(problem):
     frontier = util.PriorityQueue()
     explored_set = set()
     previous_dict = dict()
+    path_cost = dict()
 
     start_state = problem.getStartState()
-    frontier.update((start_state, 0), 0)
+    frontier.push(start_state, 0)
     previous_dict[start_state] = "start"
+    path_cost[start_state] = 0
 
     while not frontier.isEmpty():
-        cur_state, path_cost = frontier.pop()
+        cur_state = frontier.pop()
+        # print(cur_state, ":", path_cost)
         explored_set.add(cur_state)
         if problem.isGoalState(cur_state):
             goal_state = cur_state
@@ -192,9 +195,10 @@ def uniformCostSearch(problem):
         
         for next_state in problem.expand(cur_state):
             if next_state[0] not in explored_set:
-                new_path_cost =  path_cost+ next_state[2]
-                frontier.update((next_state[0], new_path_cost), new_path_cost) 
+                new_path_cost =  path_cost[cur_state]+ next_state[2]
+                frontier.update(next_state[0],new_path_cost) 
                 previous_dict[next_state[0]] = (cur_state , next_state[1]) 
+                path_cost[next_state[0]] = new_path_cost
 
     path = []
     while previous_dict[goal_state] != "start":
