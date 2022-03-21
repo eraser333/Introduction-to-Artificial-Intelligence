@@ -261,7 +261,7 @@ def yourHeuristic(position, problem, info={}):
     # 曼哈顿距离作为启发式函数
     xy1 = position
     xy2 = problem.goal
-    return (xy1[0] - xy2[0])  + (xy1[1] - xy2[1])
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
 class MediumCrazySearchAgent(SearchAgent):
     """

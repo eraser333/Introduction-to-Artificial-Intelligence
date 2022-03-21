@@ -187,10 +187,10 @@ def uniformCostSearch(problem):
 
     while not frontier.isEmpty():
         cur_state = frontier.pop()
-        # print(cur_state, ":", path_cost)
         explored_set.add(cur_state)
         if problem.isGoalState(cur_state):
             goal_state = cur_state
+            print(path_cost[cur_state])
             break
         
         for next_state in problem.expand(cur_state):
@@ -211,43 +211,33 @@ def uniformCostSearch(problem):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    pqueue = util.PriorityQueue()
-    pqueue.push((problem.getStartState(), []), 0)
-
-    stateSet = set()
-    stateSet.add(problem.getStartState())
-
-    while not pqueue.isEmpty():
-        pos, path = pqueue.pop()    
-        if problem.isGoalState(pos):
-            return path
-
-        for child in problem.expand(pos):
-            if (child[0] not in stateSet) or (problem.isGoalState(child[0])):
-                pqueue.update((child[0], path + [child[1]]), heuristic(child[0], problem) + problem.getCostOfActionSequence(path + [child[1]]))
-                stateSet.add(child[0])
-                
     frontier = util.PriorityQueue()
     explored_set = set()
     previous_dict = dict()
+    path_cost = dict()
 
     start_state = problem.getStartState()
     f_start = heuristic(start_state)
-    frontier.update((start_state, 0), f_start)
+    frontier.push(start_state, f_start)
     previous_dict[start_state] = "start"
+    path_cost[start_state] = 0
 
     while not frontier.isEmpty():
-        cur_state, g_cost = frontier.pop()
+        cur_state = frontier.pop()
+        #print(cur_state)
         explored_set.add(cur_state)
         if problem.isGoalState(cur_state):
             goal_state = cur_state
+            print(path_cost[goal_state])
             break
         
         for next_state in problem.expand(cur_state):
             if next_state[0] not in explored_set:
-                new_g_cost = g_cost + next_state[2]
+                new_g_cost = path_cost[cur_state] + next_state[2]
                 new_f_cost =  new_g_cost + heuristic(next_state[0])
-                frontier.update((next_state[0], new_g_cost), new_f_cost) 
+                print(next_state[0], new_f_cost)
+                frontier.update(next_state[0], new_f_cost) 
+                path_cost[next_state[0]] = new_g_cost
                 previous_dict[next_state[0]] = (cur_state , next_state[1]) 
 
     path = []
