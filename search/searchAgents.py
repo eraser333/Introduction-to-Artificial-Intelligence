@@ -263,7 +263,7 @@ def yourHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
-class MediumCrazySearchAgent(SearchAgent):
+class MediumScarySearchAgent(SearchAgent):
     """
     You can design different SearchAgents for different Mazes
     """
@@ -273,12 +273,12 @@ class MediumCrazySearchAgent(SearchAgent):
         costFn = lambda pos: 2 ** pos[0]
         self.searchType = lambda state: PositionSearchProblem(state, costFn, (1, 1), None, False)
 
-class foodSearchAgent(SearchAgent):
+class FoodSearchAgent(SearchAgent):
     """
     You can design different SearchAgents for different Mazes
     """
     def __init__(self):
         "*** YOUR CODE HERE ***"
         self.searchFunction = search.uniformCostSearch
-        costFn = lambda pos: 0.01 if pos[0] == 1 or pos[1] == 5  else 1
+        costFn = lambda pos: 3 ** pos[0] + 2 ** abs(3-pos[1])
         self.searchType = lambda state: PositionSearchProblem(state, costFn, (16, 1), None, False)

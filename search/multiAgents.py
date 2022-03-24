@@ -79,16 +79,106 @@ class MinimaxAgent(MultiAgentSearchAgent):
         limits your minimax tree depth (note that depth increases one means
         the pacman and all ghosts has already decide their actions)
         """
-        util.raiseNotDefined()
+        actions_set = gameState.getLegalActions(0)
+        v = -100000000
+        sp_depth = self.depth
+        for action in actions_set:
+            self.depth -= 1
+            cal_max_value = self.min_value(gameState.generateChild(0, action), 1)
+            # print(action, cal_max_value)
+            if  cal_max_value > v:
+                v = cal_max_value
+                res_action = action
+            self.depth = sp_depth
+        
+        return res_action
+
+    def max_value(self, gameState,agentIndex):
+        if self.depth <= 0 or gameState.isWin() or gameState.isLose(): 
+            return self.evaluationFunction(gameState)
+
+        actions_set = gameState.getLegalActions(agentIndex)
+        v = -100000000
+        self.depth -= 1
+        for action in actions_set:
+            nextState = gameState.generateChild(agentIndex, action)
+            v = max(v, self.min_value(nextState, agentIndex+1))
+
+        return v
+
+    def min_value(self, gameState, agentIndex):
+        if gameState.isWin() or gameState.isLose():
+            return self.evaluationFunction(gameState)
+
+        actions_set = gameState.getLegalActions(agentIndex)
+        v = +100000000
+        for action in actions_set:
+            nextState = gameState.generateChild(agentIndex, action)
+            num_agent = gameState.getNumAgents()
+            if agentIndex == num_agent -1:
+                v = min(v, self.max_value(nextState, 0))
+            else:
+                v = min(v, self.min_value(nextState, agentIndex+1))
+        
+        return v
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
     """
-
     def getAction(self, gameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        alpha = -1000000000
+        beta = +1000000000
+        actions_set = gameState.getLegalActions(0)
+        v = -100000000
+        sp_depth = self.depth
+        for action in actions_set:
+            self.depth -= 1
+            cal_max_value = self.min_value(gameState.generateChild(0, action), 1, alpha, beta)
+            alpha = max (alpha, cal_max_value)
+            
+            if  cal_max_value > v:
+                v = cal_max_value
+                res_action = action
+            
+            self.depth = sp_depth
+        
+        return res_action
+
+    def max_value(self, gameState,agentIndex, alpha, beta):
+        if self.depth <= 0 or gameState.isWin() or gameState.isLose(): 
+            return self.evaluationFunction(gameState)
+
+        actions_set = gameState.getLegalActions(agentIndex)
+        v = -100000000
+        self.depth -= 1
+        for action in actions_set:
+            nextState = gameState.generateChild(agentIndex, action)
+            v = max(v, self.min_value(nextState, agentIndex+1, alpha, beta))
+            if v >= beta:
+                return v
+            alpha = max(alpha, v)
+        return v
+
+    def min_value(self, gameState, agentIndex, alpha, beta):
+        if gameState.isWin() or gameState.isLose():
+            return self.evaluationFunction(gameState)
+
+        actions_set = gameState.getLegalActions(agentIndex)
+        v = +100000000
+        for action in actions_set:
+            nextState = gameState.generateChild(agentIndex, action)
+            num_agent = gameState.getNumAgents()
+            if agentIndex == num_agent -1:
+                v = min(v, self.max_value(nextState, 0, alpha, beta))
+            else:
+                v = min(v, self.min_value(nextState, agentIndex+1, alpha, beta))
+
+            if v <= alpha:
+                return v
+            beta = min(beta, v)
+        return v
