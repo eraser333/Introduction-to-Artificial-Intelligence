@@ -1,6 +1,5 @@
 from game import Directions
 import random, util
-
 from game import Agent
 
 #######################################################
@@ -90,7 +89,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 v = cal_max_value
                 res_action = action
             self.depth = sp_depth
-        
+    
         return res_action
 
     def max_value(self, gameState,agentIndex):
